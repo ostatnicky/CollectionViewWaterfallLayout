@@ -97,7 +97,9 @@ open class CollectionViewWaterfallLayout: UICollectionViewLayout {
             invalidateIfNotEqual(NSValue(uiEdgeInsets: oldValue), newValue: NSValue(uiEdgeInsets: sectionInset))
         }
     }
-    
+    // A dictionary that maps from the CollectionView's section [key] to the item-width of its elements [value]. (read-only)
+    private(set) open var itemWidthForSection:[Int : Float] = [:]
+
     //MARK: Private Properties
     fileprivate weak var delegate: CollectionViewWaterfallLayoutDelegate?  {
         get {
@@ -141,6 +143,7 @@ open class CollectionViewWaterfallLayout: UICollectionViewLayout {
         var top:Float = 0
         var attributes: UICollectionViewLayoutAttributes
         
+        itemWidthForSection.removeAll()
         for section in 0..<numberOfSections! {
             /*
             * 1. Get section-specific metrics (minimumInteritemSpacing, sectionInset)
@@ -163,6 +166,7 @@ open class CollectionViewWaterfallLayout: UICollectionViewLayout {
             
             let width = Float(collectionView!.frame.size.width - sectionInset.left - sectionInset.right)
             let itemWidth = floorf((width - Float(columnCount - 1) * Float(minimumColumnSpacing)) / Float(columnCount))
+            self.itemWidthForSection[section] = itemWidth
             
             /*
             * 2. Section header
